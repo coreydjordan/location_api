@@ -1,4 +1,3 @@
-from django.shortcuts import render
 import requests
 from dotenv import dotenv_values
 from flask import Flask, render_template, request
@@ -21,21 +20,25 @@ def index():
             'q': address,
             'format': 'json'
         }
-        response = requests.get(ENV['URL'], params=data)
+
+        try:
+            response = requests.get(ENV['URL'], params=data)
+        except Exception as e:
+            raise e
 
         latitude = response.json()[0]['lat']
         longitude = response.json()[0]['lon']
-        
+
         res = {
             'message' : address,
             'latitude': latitude,
             'longitude': longitude
         }
-    
+
         return render_template('results.html', **res)
     return render_template('index.html')
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=8000, debug=True)
- 
+    app.run(host=ENV['HOST'], port=ENV['PORT'], debug=True)
+
 
